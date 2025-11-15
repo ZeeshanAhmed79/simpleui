@@ -47,14 +47,22 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Deploy
+      - name: Deploy to EC2
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
         run: |
-          echo "$SSH_PRIVATE_KEY" > mykeypair
+          # Save private key and fix line endings
+          echo "$SSH_PRIVATE_KEY" | tr -d '\r' > mykeypair
           chmod 600 mykeypair
+
+          # Copy project to EC2
           scp -o StrictHostKeyChecking=no -i mykeypair -r . $SERVER_USER@$SERVER_HOST:/home/$SERVER_USER/simpleui
-          ssh -o StrictHostKeyChecking=no -i mykeypair $SERVER_USER@$SERVER_HOST "cd /home/$SERVER_USER/simpleui && ./deploy.sh"
-          
+
+          # SSH and run deployment script
+          ssh -o StrictHostKeyChecking=no -i mykeypair $SERVER_USER@$SERVER_HOST << 'EOF'
+            cd /home/$USER/simpleui || exit 1
+            chmod +x deploy.sh
+            ./deploy.sh
+EOF

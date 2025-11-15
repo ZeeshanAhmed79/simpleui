@@ -55,4 +55,6 @@ jobs:
         run: |
           echo "$SSH_PRIVATE_KEY" > key.pem
           chmod 600 key.pem
+          scp -o StrictHostKeyChecking=no -i key.pem -r . $SERVER_USER@$SERVER_HOST:/home/$SERVER_USER/simpleui
           ssh -o StrictHostKeyChecking=no -i key.pem $SERVER_USER@$SERVER_HOST "cd /home/$SERVER_USER/simpleui && ./deploy.sh"
+          

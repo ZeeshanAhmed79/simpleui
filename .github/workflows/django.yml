@@ -53,8 +53,8 @@ jobs:
           SERVER_USER: ${{ secrets.SERVER_USER }}
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
         run: |
-          echo "$SSH_PRIVATE_KEY" > key.pem
-          chmod 600 key.pem
-          scp -o StrictHostKeyChecking=no -i key.pem -r . $SERVER_USER@$SERVER_HOST:/home/$SERVER_USER/simpleui
-          ssh -o StrictHostKeyChecking=no -i key.pem $SERVER_USER@$SERVER_HOST "cd /home/$SERVER_USER/simpleui && ./deploy.sh"
+          echo "$SSH_PRIVATE_KEY" > mykeypair
+          chmod 600 mykeypair
+          scp -o StrictHostKeyChecking=no -i mykeypair -r . $SERVER_USER@$SERVER_HOST:/home/$SERVER_USER/simpleui
+          ssh -o StrictHostKeyChecking=no -i mykeypair $SERVER_USER@$SERVER_HOST "cd /home/$SERVER_USER/simpleui && ./deploy.sh"
           
